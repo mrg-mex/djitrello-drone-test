@@ -1,4 +1,4 @@
-# Programa para el control del drone Dji Trello
+# Control del drone Dji Trello
 import cv2
 from djitellopy import Tello
 
