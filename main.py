@@ -23,13 +23,11 @@ class DroneCtrl:
     def get_state(self):
         return self._drone.get_current_state()
 
-    def start_drone(self):
+    def start_drone(self, take_off=True):
         self._drone.connect()
-        self._drone.for_back_velocity = 0
-        self._drone.left_right_velocity = 0
-        self._drone.up_down_velocity = 0
-        self._drone.yaw_velocity = 0
-        self._drone.speed = 0
+        if take_off:
+            self._drone.takeoff()
+        return self._drone.is_flying
 
     def start_camera(self):
         self._is_camera_on = True
@@ -41,15 +39,27 @@ class DroneCtrl:
     def camera_show(self):
         while self._is_camera_on:
             frame_read = self._drone.get_frame_read()
-            frame_img = cv2.resize(frame_read.frame, (self._iw, self._ih))
-            cv2.imshow('Drone video feed', frame_img)
+            single_frame = frame_read.frame
+            frame_img = cv2.resize(single_frame, (self._iw, self._ih))
+            cv2.imshow('video01', frame_img)
+        if not self._is_camera_on:
+            cv2.destroyWindow('video01')
 
-        # cv2.destroyWindow('Drone video feed')
-        cv2.destroyAllWindows()
+    def test_drone(self, left=100, rotate=90, forward=100, land=True):
+        if not self._drone.is_flying:
+            self._drone.takeoff()
+        self._drone.move_left(left)
+        self._drone.rotate_clockwise(rotate)
+        self._drone.rotate_counter_clockwise(rotate)
+        self._drone.move_right(left)
+        self._drone.move_forward(forward)
+        self._drone.move_back(forward)
+        if land:
+            self._drone.land()
 
 
 if __name__ == '__main__':
     dronectrl = DroneCtrl(640, 480)
-    dronectrl.start_drone()
-    print('Drone activado: bateria:{}, {}'.format(dronectrl.get_battery(), dronectrl.get_state()))
+    dronectrl.start_drone(False)
+    print('Drone activado: bateria:{}'.format(dronectrl.get_battery()))
     dronectrl.start_camera()
