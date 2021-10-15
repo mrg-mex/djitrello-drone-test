@@ -53,4 +53,3 @@ if __name__ == '__main__':
     dronectrl.start_drone()
     print('Drone activado: bateria:{}, {}'.format(dronectrl.get_battery(), dronectrl.get_state()))
     dronectrl.start_camera()
-
