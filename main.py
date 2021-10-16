@@ -37,13 +37,22 @@ class DroneCtrl:
         self._is_camera_on = False
 
     def camera_show(self):
-        while self._is_camera_on:
-            frame_read = self._drone.get_frame_read()
-            single_frame = frame_read.frame
-            frame_img = cv2.resize(single_frame, (self._iw, self._ih))
-            cv2.imshow('video01', frame_img)
-        if not self._is_camera_on:
-            cv2.destroyWindow('video01')
+        try:
+            if self._drone.stream_on:
+                self._drone.streamoff()
+            self._drone.streamon()
+            while self._is_camera_on:
+                frame_read = self._drone.get_frame_read()
+                single_frame = frame_read.frame
+                frame_img = cv2.resize(single_frame, (self._iw, self._ih))
+                cv2.imshow("video01", frame_img)
+                cv2.waitKey(1)
+            if not self._is_camera_on:
+                if self._drone.stream_on:
+                    self._drone.streamoff()
+                cv2.destroyWindow("video01")
+        except Exception as e:
+            print(str(e))
 
     def test_drone(self, left=100, rotate=90, forward=100, land=True):
         if not self._drone.is_flying:
@@ -59,7 +68,7 @@ class DroneCtrl:
 
 
 if __name__ == '__main__':
-    dronectrl = DroneCtrl(640, 480)
+    dronectrl = DroneCtrl()
     dronectrl.start_drone(False)
     print('Drone activado: bateria:{}'.format(dronectrl.get_battery()))
     dronectrl.start_camera()
