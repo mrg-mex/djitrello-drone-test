@@ -1,7 +1,6 @@
 # Control del drone Dji Trello
 import cv2
 from djitellopy import Tello
-# import time
 
 
 class DroneCtrl:
@@ -73,6 +72,5 @@ if __name__ == '__main__':
     dronectrl.start_drone(False)
     print('Drone activado: bateria:{}'.format(dronectrl.get_battery()))
     dronectrl.start_camera()
-    # wait = time
-    # wait.sleep(10)
+    dronectrl.test_drone(20, 90, 20, True)
     dronectrl.stop_camera()
